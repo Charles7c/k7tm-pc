@@ -3,6 +3,42 @@
  */
 
 /**
+ * 判断当前设备为PC端还是Mobile端
+ * @returns {{
+ *            isPc: boolean, 是否是PC设备
+ *            isMobile: (boolean|boolean), 是否是移动设备[包括平板]
+ *            isPhone: boolean, 是否是手机设备
+ *            isTablet: boolean | boolean, 是否是平板设备
+ *            isAndroid: boolean, 是否是Android设备
+ *            isIPhone: (boolean|boolean), 是否是苹果设备
+ *            isChrome: boolean 是否是谷歌系浏览器,
+ *            isFireFox: boolean, 是否是火狐浏览器
+ *            }}
+ */
+export function checkDevice() {
+  const ua = navigator.userAgent
+  const isWindowsPhone = /(?:Windows Phone)/.test(ua)
+  const isSymbian = /(?:SymbianOS)/.test(ua) || isWindowsPhone
+  const isAndroid = /(?:Android)/.test(ua)
+  const isFireFox = /(?:Firefox)/.test(ua)
+  const isChrome = /(?:Chrome|CriOS)/.test(ua)
+  const isTablet = /(?:iPad|PlayBook)/.test(ua) || (isAndroid && !/(?:Mobile)/.test(ua)) || (isFireFox && /(?:Tablet)/.test(ua))
+  const isIPhone = /(?:iPhone)/.test(ua) && !isTablet
+  const isPc = !isIPhone && !isAndroid && !isSymbian
+  return {
+    isPc: isPc,
+    isMobile: isIPhone || isAndroid || isTablet,
+    isPhone: isIPhone || isAndroid,
+    isTablet: isTablet,
+    isAndroid: isAndroid,
+    isIPhone: isIPhone,
+    isChrome: isChrome,
+    isFireFox: isFireFox
+  }
+}
+
+
+/**
  * Parse the time to string
  * @param {(Object|string|number)} time
  * @param {string} cFormat
