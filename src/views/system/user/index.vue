@@ -49,10 +49,10 @@
               @change="crud.toQuery"
             >
               <el-option
-                v-for="item in enabledTypeOptions"
+                v-for="item in dict.user_status"
                 :key="item.key"
-                :label="item.display_name"
-                :value="item.key"
+                :label="item.label"
+                :value="item.value"
               />
             </el-select>
             <rrOperation />
@@ -85,7 +85,7 @@
             </el-form-item>
             <el-form-item label="岗位" prop="jobs">
               <el-select
-                v-model="form.jobs"
+                v-model="jobDatas"
                 style="width: 178px"
                 multiple
                 placeholder="请选择"
@@ -117,7 +117,7 @@
             </el-form-item>
             <el-form-item style="margin-bottom: 0;" label="角色" prop="roles">
               <el-select
-                v-model="form.roles"
+                v-model="roleDatas"
                 style="width: 437px"
                 multiple
                 placeholder="请选择"
@@ -157,6 +157,8 @@
               <el-switch
                 v-model="scope.row.enabled"
                 :disabled="user.id === scope.row.id"
+                :active-value="1"
+                :inactive-value="0"
                 active-color="#409EFF"
                 inactive-color="#F56C6C"
                 @change="changeEnabled(scope.row, scope.row.enabled)"
@@ -233,16 +235,13 @@ export default {
     return {
       height: document.documentElement.clientHeight - 180 + 'px;',
       deptName: '', depts: [], deptDatas: [], jobs: [], level: 3, roles: [],
+      jobDatas: [], roleDatas: [], // 多选时使用
       defaultProps: { children: 'children', label: 'name', isLeaf: 'leaf' },
       permission: {
         add: ['admin', 'user:add'],
         edit: ['admin', 'user:edit'],
         del: ['admin', 'user:del']
       },
-      enabledTypeOptions: [
-        { key: 'true', display_name: '激活' },
-        { key: 'false', display_name: '锁定' }
-      ],
       rules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -291,25 +290,6 @@ export default {
         userJobs.push(job)
       })
     },
-    [CRUD.HOOK.afterAddError](crud) {
-      this.afterErrorMethod(crud)
-    },
-    [CRUD.HOOK.afterEditError](crud) {
-      this.afterErrorMethod(crud)
-    },
-    afterErrorMethod(crud) {
-      // 恢复select
-      const initRoles = []
-      const initJobs = []
-      userRoles.forEach(function(role, index) {
-        initRoles.push(role.id)
-      })
-      userJobs.forEach(function(job, index) {
-        initJobs.push(job.id)
-      })
-      crud.form.roles = initRoles
-      crud.form.jobs = initJobs
-    },
     deleteTag(value) {
       userRoles.forEach(function(data, index) {
         if (data.id === value) {
@@ -327,29 +307,30 @@ export default {
       }
       this.getRoleLevel()
       this.getJobs()
-      form.enabled = form.enabled.toString()
     },
-    // 打开编辑弹窗前做的操作
+    // 新增前将多选的值设置为空
+    [CRUD.HOOK.beforeToAdd]() {
+      this.jobDatas = []
+      this.roleDatas = []
+    },
+    // 初始化编辑时候的角色与岗位
     [CRUD.HOOK.beforeToEdit](crud, form) {
       this.getJobs(this.form.dept.id)
+      this.jobDatas = []
+      this.roleDatas = []
       userRoles = []
       userJobs = []
-      const roles = []
-      const jobs = []
+      const _this = this
       form.roles.forEach(function(role, index) {
-        roles.push(role.id)
-        // 初始化编辑时候的角色
+        _this.roleDatas.push(role.id)
         const rol = { id: role.id }
         userRoles.push(rol)
       })
       form.jobs.forEach(function(job, index) {
-        jobs.push(job.id)
-        // 初始化编辑时候的岗位
+        _this.jobDatas.push(job.id)
         const data = { id: job.id }
         userJobs.push(data)
       })
-      form.roles = roles
-      form.jobs = jobs
     },
     // 提交前做的操作
     [CRUD.HOOK.afterValidateCU](crud) {
@@ -359,13 +340,13 @@ export default {
           type: 'warning'
         })
         return false
-      } else if (crud.form.jobs.length === 0) {
+      } else if (this.jobDatas.length === 0) {
         this.$message({
           message: '岗位不能为空',
           type: 'warning'
         })
         return false
-      } else if (crud.form.roles.length === 0) {
+      } else if (this.roleDatas.length === 0) {
         this.$message({
           message: '角色不能为空',
           type: 'warning'
@@ -398,7 +379,7 @@ export default {
       }, 100)
     },
     getDepts() {
-      getDepts({ enabled: true }).then(res => {
+      getDepts({ enabled: 1 }).then(res => {
         this.depts = res.content.map(function(obj) {
           if (obj.hasChildren) {
             obj.children = null
@@ -427,7 +408,7 @@ export default {
     // 获取弹窗内部门数据
     loadDepts({ action, parentNode, callback }) {
       if (action === LOAD_CHILDREN_OPTIONS) {
-        getDepts({ enabled: true, pid: parentNode.id }).then(res => {
+        getDepts({ enabled: 1, pid: parentNode.id }).then(res => {
           parentNode.children = res.content.map(function(obj) {
             if (obj.hasChildren) {
               obj.children = null
@@ -459,10 +440,10 @@ export default {
         crudUser.edit(data).then(res => {
           this.crud.notify(this.dict.label.user_status[val] + '成功', CRUD.NOTIFICATION_TYPE.SUCCESS)
         }).catch(() => {
-          data.enabled = !data.enabled
+          data.enabled = (data.enabled === 1) ? 0 : 1
         })
       }).catch(() => {
-        data.enabled = !data.enabled
+        data.enabled = (data.enabled === 1) ? 0 : 1
       })
     },
     // 获取弹窗内角色数据
@@ -491,7 +472,7 @@ export default {
 </script>
 
 <style rel="stylesheet/scss" lang="scss" scoped>
- ::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
+  ::v-deep .vue-treeselect__control,::v-deep .vue-treeselect__placeholder,::v-deep .vue-treeselect__single-value {
     height: 30px;
     line-height: 30px;
   }
