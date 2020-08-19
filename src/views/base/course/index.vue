@@ -117,14 +117,25 @@ import udOperation from '@crud/UD.operation'
 import pagination from '@crud/Pagination'
 import { checkDevice } from '@/utils/index'
 
-const defaultForm = { courseId: null, name: null, sort: 1, courseDesc: null, enabled: 1, createBy: null, updateBy: null, createTime: null, updateTime: null }
+const defaultForm = {
+  courseId: null,
+  name: null, sort: 1,
+  courseDesc: null, enabled: 1,
+  createBy: null, updateBy: null,
+  createTime: null, updateTime: null
+}
 export default {
   name: 'Course',
   components: { pagination, crudOperation, rrOperation, udOperation },
   mixins: [presenter(), header(), form(defaultForm), crud()],
   dicts: ['course_status'],
   cruds() {
-    return CRUD({ title: '课程', url: 'api/course', sort: 'sort,asc', crudMethod: { ...crudCourse }})
+    return CRUD({
+      title: '课程',
+      url: 'api/course',
+      sort: 'sort,asc',
+      crudMethod: { ...crudCourse }
+    })
   },
   data() {
     return {
@@ -191,13 +202,6 @@ export default {
     // 钩子：在获取表格数据之前执行，false 则代表不获取数据
     [CRUD.HOOK.beforeRefresh]() {
       return true
-    },
-    booleanFormat(row, column) {
-      if (row[column.property] === 0) {
-        return '停用'
-      } else {
-        return '启用'
-      }
     }
   }
 }
