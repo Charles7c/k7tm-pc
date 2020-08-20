@@ -54,7 +54,7 @@
             v-for="(item, index) in base.course"
             :key="item.name + index"
             :label="item.name"
-            :value="item.courseId"
+            :value="item.id"
           />
         </el-select>
         <el-select
@@ -145,12 +145,12 @@
             </el-select>
           </el-form-item>
           <el-form-item label="课程类型" prop="course">
-            <el-select v-model="form.course" clearable style="width: 194px">
+            <el-select v-model="form.courseId" clearable style="width: 194px">
               <el-option
                 v-for="(item, index) in base.course"
                 :key="item.name + index"
                 :label="item.name"
-                :value="item.courseId"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
@@ -187,7 +187,7 @@
       </el-dialog>
       <!--表格渲染-->
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-        <el-table-column type="selection" width="55" />
+        <el-table-column type="selection" width="55" align="center"/>
         <el-table-column prop="name" label="名称" align="center" />
         <el-table-column prop="type" label="类型" align="center">
           <template slot-scope="scope">
@@ -249,7 +249,7 @@ import pagination from '@crud/Pagination'
 import DateRangePicker from '@/components/DateRangePicker'
 import { checkDevice } from '@/utils/index'
 
-const defaultForm = { classId: null, name: null, type: null, status: null, stuNum: null, classTransferNum: null, temporaryAbsenceNum: null, refundNum: null, expelNum: null, courseId: null, vcTeacher: null, taTeacher: null, pmTeacher: null, classTime: null, graduateTime: null, desc: null, createBy: null, updateBy: null, createTime: null, updateTime: null }
+const defaultForm = { id: null, name: null, type: null, status: null, stuNum: null, classTransferNum: null, temporaryAbsenceNum: null, refundNum: null, expelNum: null, courseId: null, vcTeacher: null, taTeacher: null, pmTeacher: null, classTime: null, graduateTime: null, desc: null, createBy: null, updateBy: null, createTime: null, updateTime: null }
 export default {
   name: 'Classs',
   components: { pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
@@ -257,7 +257,7 @@ export default {
   dicts: ['classs_type', 'classs_status'],
   bases: ['course'],
   cruds() {
-    return CRUD({ title: '班级', url: 'api/classs', sort: 'classId,desc', crudMethod: { ...crudClasss }})
+    return CRUD({ title: '班级', url: 'api/classs', sort: ['graduateTime,asc', 'createTime,desc'], crudMethod: { ...crudClasss }})
   },
   data() {
     return {
@@ -296,16 +296,7 @@ export default {
         stuClassDesc: [
           { max: 200, message: '班级描述请控制在200个字符内' }
         ]
-      },
-      queryTypeOptions: [
-        { key: 'name', display_name: '名称' },
-        { key: 'type', display_name: '类型' },
-        { key: 'status', display_name: '状态' },
-        { key: 'courseId', display_name: '课程类型' },
-        { key: 'vcTeacher', display_name: '职业顾问' },
-        { key: 'taTeacher', display_name: '技术顾问' },
-        { key: 'pmTeacher', display_name: '项目经理' }
-      ]
+      }
     }
   },
   created() {

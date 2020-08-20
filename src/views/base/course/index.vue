@@ -66,7 +66,7 @@
       </el-dialog>
       <!--表格渲染-->
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-        <el-table-column type="selection" width="55" />
+        <el-table-column type="selection" width="55" align="center"/>
         <el-table-column prop="name" label="名称" align="center"/>
         <el-table-column prop="desc" label="描述" align="center"/>
         <el-table-column prop="enabled" label="课程状态" align="center">
@@ -118,7 +118,7 @@ import pagination from '@crud/Pagination'
 import { checkDevice } from '@/utils/index'
 
 const defaultForm = {
-  courseId: null,
+  id: null,
   name: null, sort: 1,
   courseDesc: null, enabled: 1,
   createBy: null, updateBy: null,
@@ -155,11 +155,7 @@ export default {
         enabled: [
           { required: true, message: '请选择课程状态', trigger: 'blur' }
         ]
-      },
-      queryTypeOptions: [
-        { key: 'name', display_name: '名称' },
-        { key: 'enabled', display_name: '课程状态' }
-      ]
+      }
     }
   },
   created() {

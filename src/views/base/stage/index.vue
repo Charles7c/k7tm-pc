@@ -24,7 +24,7 @@
             v-for="(item, index) in base.course"
             :key="item.name + index"
             :label="item.name"
-            :value="item.courseId"
+            :value="item.id"
           />
         </el-select>
         <rrOperation :crud="crud" />
@@ -38,18 +38,24 @@
             <el-input v-model="form.name" style="width: 194px;" />
           </el-form-item>
           <el-form-item label="所属课程" prop="courseId">
-            <el-select v-model="form.course" clearable style="width: 194px">
+            <el-select v-model="form.courseId" clearable style="width: 194px">
               <el-option
                 v-for="(item, index) in base.course"
                 :key="item.name + index"
                 :label="item.name"
-                :value="item.courseId"
+                :value="item.id"
               />
             </el-select>
           </el-form-item>
           <br>
           <el-form-item label="排序">
-            未设置字典，请手动设置 Radio
+            <el-input-number
+              v-model.number="form.sort"
+              :min="0"
+              :max="999"
+              controls-position="right"
+              style="width: 194px;"
+            />
           </el-form-item>
           <br>
           <el-form-item label="备注">
@@ -70,19 +76,21 @@
       </el-dialog>
       <!--表格渲染-->
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
-        <el-table-column type="selection" width="55" />
-        <el-table-column prop="name" label="名称" align="center" />
+        <el-table-column type="selection" width="55" align="center"/>
+        <el-table-column prop="name" label="名称" :show-overflow-tooltip="true" align="center" />
         <el-table-column prop="ramark" label="备注" align="center" />
-        <el-table-column prop="sort" label="排序" align="center" />
         <el-table-column prop="courseId" label="所属课程" align="center">
           <template slot-scope="scope">
             {{ base.name.course[scope.row.courseId] }}
           </template>
         </el-table-column>
         <el-table-column prop="updateBy" label="更新人" align="center" />
-        <el-table-column prop="updateTime" label="更新时间" width="120" :formatter="formatDate" align="center" />
-
-        <el-table-column v-permission="['admin','Stage:edit','Stage:del']" label="操作" width="150px" align="center">
+        <el-table-column prop="updateTime" label="更新时间" width="135" align="center">
+          <template slot-scope="scope">
+            <span>{{ parseTime(scope.row.updateTime) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column v-permission="['admin','stage:edit','stage:del']" label="操作" width="150px" align="center">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"
@@ -98,7 +106,7 @@
 </template>
 
 <script>
-import crudStage from '@/api/base/Stage'
+import crudStage from '@/api/base/stage'
 import CRUD, { presenter, header, form, crud } from '@crud/crud'
 import rrOperation from '@crud/RR.operation'
 import crudOperation from '@crud/CRUD.operation'
@@ -115,8 +123,8 @@ export default {
   cruds() {
     return CRUD({
       title: '阶段',
-      url: 'api/Stage',
-      sort: 'id,desc',
+      url: 'api/stage',
+      sort: 'sort,asc',
       crudMethod: { ...crudStage }
     })
   },
@@ -124,19 +132,15 @@ export default {
     return {
       textareaStyle: '260%', dialogStyle: '660px',
       permission: {
-        add: ['admin', 'Stage:add'],
-        edit: ['admin', 'Stage:edit'],
-        del: ['admin', 'Stage:del']
+        add: ['admin', 'stage:add'],
+        edit: ['admin', 'stage:edit'],
+        del: ['admin', 'stage:del']
       },
       rules: {
         courseId: [
           { required: true, message: '所属课程不能为空', trigger: 'blur' }
         ]
-      },
-      queryTypeOptions: [
-        { key: 'name', display_name: '名称' },
-        { key: 'courseId', display_name: '所属课程' }
-      ]
+      }
     }
   },
   created() {

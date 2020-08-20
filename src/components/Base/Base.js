@@ -18,8 +18,8 @@ export default class Base {
       ps.push(getCourse(n).then(data => {
         this.base[n].splice(0, 0, ...data.content)
         data.content.forEach(d => {
-          Vue.set(this.base.base[n], d.courseId, d)
-          Vue.set(this.base.name[n], d.courseId, d.name)
+          Vue.set(this.base.base[n], d.id, d)
+          Vue.set(this.base.name[n], d.id, d.name)
         })
       }))
     })

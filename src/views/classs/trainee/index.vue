@@ -10,7 +10,7 @@
             v-for="(item, index) in classes"
             :key="item.name + index"
             :label="item.name"
-            :value="item.classId"
+            :value="item.id"
           />
         </el-select>
         <el-input
@@ -72,7 +72,7 @@
           v-for="(item, index) in base.course"
           :key="item.name + index"
           :label="item.name"
-          :value="item.courseId"
+          :value="item.id"
           />
         </el-select>
         <el-select
@@ -246,7 +246,7 @@
                   v-for="(item, index) in base.course"
                   :key="item.name + index"
                   :label="item.name"
-                  :value="item.courseId"
+                  :value="item.id"
                 />
               </el-select>
             </el-form-item>
@@ -291,7 +291,7 @@
                   v-for="(item, index) in classes"
                   :key="item.name + index"
                   :label="item.name"
-                  :value="item.classId"
+                  :value="item.id"
                 />
               </el-select>
             </el-form-item>
