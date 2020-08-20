@@ -33,7 +33,7 @@
     "url": "https://github.com/Charles7c/k7tm-backend/issues"
   },
   "dependencies": {
-    "@riophae/vue-treeselect": "0.1.0",
+    "@riophae/vue-treeselect": "0.4.0",
     "axios": "0.18.1",
     "clipboard": "2.0.4",
     "codemirror": "^5.49.2",
@@ -65,7 +65,7 @@
     "vuedraggable": "2.20.0",
     "vuex": "3.1.0",
     "wangeditor": ">=3.0.0",
-    "xlsx": "^0.11.16",
+    "xlsx": "^0.14.1",
     "vue-image-crop-upload": "^2.5.0"
   },
   "devDependencies": {
