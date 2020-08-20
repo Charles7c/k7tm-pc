@@ -68,9 +68,51 @@
         </el-select>
         <el-input v-model="query.schoolId" clearable placeholder="所在校区" style="width: 134px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <el-input v-model="query.classId" clearable placeholder="所在班级" style="width: 134px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <el-input v-model="query.status" clearable placeholder="学习状态" style="width: 134px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <el-input v-model="query.education" clearable placeholder="最高学历" style="width: 134px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
-        <el-input v-model="query.source" clearable placeholder="了解渠道" style="width: 134px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
+        <el-select
+          v-model="query.learningStatus"
+          clearable
+          placeholder="学习状态搜索"
+          class="filter-item"
+          style="width: 134px"
+          @change="crud.toQuery"
+        >
+          <el-option
+            v-for="(item, index) in dict.learning_status"
+            :key="item.label + index"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <el-select
+          v-model="query.education"
+          clearable
+          placeholder="最高学历搜索"
+          class="filter-item"
+          style="width: 134px"
+          @change="crud.toQuery"
+        >
+          <el-option
+            v-for="(item, index) in dict.education_level"
+            :key="item.label + index"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
+        <el-select
+          v-model="query.source"
+          clearable
+          placeholder="了解渠道搜索"
+          class="filter-item"
+          style="width: 134px"
+          @change="crud.toQuery"
+        >
+          <el-option
+            v-for="(item, index) in dict.understand_channel"
+            :key="item.label + index"
+            :label="item.label"
+            :value="item.value"
+          />
+        </el-select>
         <el-input v-model="query.provinceId" clearable placeholder="籍贯省份" style="width: 134px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <el-input v-model="query.cityId" clearable placeholder="籍贯城市" style="width: 134px;" class="filter-item" @keyup.enter.native="crud.toQuery" />
         <date-range-picker
@@ -164,7 +206,14 @@
               <el-input v-model="form.advisoryTeacher" placeholder="例：咨询一部-张三" style="width: 194px;" />
             </el-form-item>
             <el-form-item label="了解渠道">
-              未设置字典，请手动设置 Select
+              <el-select v-model="form.source" style="width: 194px">
+                <el-option
+                  v-for="(item, index) in dict.understand_channel"
+                  :key="item.label + index"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
             <!--<el-form-item label="推荐学员">
               <el-input v-model="form.referrerStu" style="width: 194px;" />
@@ -189,7 +238,14 @@
               <el-input v-model="form.payAmount" style="width: 194px;" />
             </el-form-item>
             <el-form-item label="费用来源">
-              未设置字典，请手动设置 Select
+              <el-select v-model="form.costSource" style="width: 194px">
+                <el-option
+                  v-for="(item, index) in dict.cost_source"
+                  :key="item.label + index"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
             <el-form-item label="家长称谓">
               <el-input v-model="form.contactName" style="width: 194px;" />
@@ -219,8 +275,15 @@
             <el-form-item label="进班时间">
               <el-date-picker v-model="form.enterClassTime" type="datetime" style="width: 194px;" />
             </el-form-item>
-            <el-form-item label="学习状态" prop="status">
-              未设置字典，请手动设置 Select
+            <el-form-item label="学习状态" prop="learningStatus">
+              <el-select v-model="form.learningStatus" style="width: 194px">
+                <el-option
+                  v-for="(item, index) in dict.learning_status"
+                  :key="item.label + index"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
             <!--<el-form-item label="剩余课时">
               <el-input v-model="form.classHour" placeholder="一对一学员请输入剩余课时" style="width: 194px;" />
@@ -230,8 +293,15 @@
           <fieldset>
             <legend>教育背景</legend>
             <el-form-item label="最高学历">
-            未设置字典，请手动设置 Select
-          </el-form-item>
+              <el-select v-model="form.education" style="width: 194px">
+                <el-option
+                  v-for="(item, index) in dict.education_level"
+                  :key="item.label + index"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
             <el-form-item label="毕业院校">
               <el-input v-model="form.graduateInstitutions" style="width: 194px;" />
             </el-form-item>
@@ -255,8 +325,25 @@
 
           <fieldset>
             <legend>关注要点</legend>
+            <el-form-item label="生活状态" prop="status">
+              <el-select v-model="form.status" style="width: 194px">
+                <el-option
+                  v-for="(item, index) in dict.trainee_status"
+                  :key="item.label + index"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
+            </el-form-item>
             <el-form-item label="专业基础" prop="basisStatus">
-              <el-input v-model="form.basisStatus" :rows="3" type="textarea" :style="'width:'+textareaStyle" />
+              <el-select v-model="form.basisStatus" style="width: 194px">
+                <el-option
+                  v-for="(item, index) in dict.basis_status"
+                  :key="item.label + index"
+                  :label="item.label"
+                  :value="item.value"
+                />
+              </el-select>
             </el-form-item>
             <br>
             <el-form-item label="学员描述" prop="traineeDesc">
@@ -287,27 +374,29 @@
       <!--表格渲染-->
       <el-table ref="table" v-loading="crud.loading" :data="crud.data" size="small" style="width: 100%;" @selection-change="crud.selectionChangeHandler">
         <el-table-column type="selection" width="55" />
-        <el-table-column prop="name" label="姓名" />
-        <el-table-column prop="phone" label="手机号" />
-        <el-table-column prop="email" label="邮箱" />
-        <el-table-column prop="identityCard" label="身份证号" />
-        <el-table-column prop="gender" label="性别" />
-        <el-table-column prop="bornDate" label="出生日期">
+        <el-table-column prop="name" label="姓名" align="center"/>
+        <el-table-column prop="phone" label="手机号" align="center"/>
+        <el-table-column prop="email" label="邮箱" align="center"/>
+        <el-table-column prop="identityCard" label="身份证号" align="center"/>
+        <el-table-column prop="gender" label="性别" align="center"/>
+        <el-table-column prop="bornDate" label="出生日期" align="center">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.bornDate) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="provinceId" label="籍贯省份" />
         <el-table-column prop="cityId" label="籍贯城市" />
-        <el-table-column prop="source" label="了解渠道" />
-        <el-table-column prop="referrerStu" label="推荐学员" />
-        <el-table-column prop="referrerTeacher" label="推荐老师" />
-        <el-table-column prop="registrationTime" label="报名时间">
+        <el-table-column prop="source" label="了解渠道" align="center">
+          <template slot-scope="scope">
+            {{ dict.label.understand_channel[scope.row.source] }}
+          </template>
+        </el-table-column>
+        <el-table-column prop="registrationTime" label="报名时间" align="center">
           <template slot-scope="scope">
             <span>{{ parseTime(scope.row.registrationTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="courseId" label="报名课程" >
+        <el-table-column prop="courseId" label="报名课程" align="center">
           <template slot-scope="scope">
             {{ base.name.course[scope.row.courseId] }}
           </template>
@@ -325,9 +414,21 @@
             <span>{{ parseTime(scope.row.enterClassTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="学习状态" />
+        <el-table-column prop="learningStatus" label="学习状态" align="center">
+          <template slot-scope="scope">
+            <el-tag v-if="scope.row.learningStatus === 6" type="danger">{{ dict.label.learning_status[scope.row.learningStatus] }}</el-tag>
+            <el-tag v-else-if="scope.row.learningStatus === 7" type="info">{{ dict.label.learning_status[scope.row.learningStatus] }}</el-tag>
+            <el-tag v-else-if="scope.row.learningStatus === 5" type="warning">{{ dict.label.learning_status[scope.row.learningStatus] }}</el-tag>
+            <el-tag v-else-if="scope.row.learningStatus === 1 || scope.row.learningStatus === 2" type="success">{{ dict.label.learning_status[scope.row.learningStatus] }}</el-tag>
+            <el-tag v-else>{{ dict.label.learning_status[scope.row.learningStatus] }}</el-tag>
+          </template>
+        </el-table-column>
         <el-table-column prop="classHour" label="剩余课时(一对一)" />
-        <el-table-column prop="education" label="最高学历" />
+        <el-table-column prop="education" label="最高学历" align="center">
+          <template slot-scope="scope">
+            {{ dict.label.education_level[scope.row.education] }}
+          </template>
+        </el-table-column>
         <el-table-column prop="graduateInstitutions" label="毕业院校" />
         <el-table-column prop="major" label="学历专业" />
         <el-table-column prop="englishLevel" label="英语水平" />
@@ -387,9 +488,9 @@ const defaultForm = {
   source: null, referrerStu: null, referrerTeacher: null,
   registrationTime: null, courseId: null, payAmount: null, earnestFlag: null, completionTime: null, costSource: null,
   contactName: null, contactPhone: null, needEmployment: null, employmentIntentionsCity: null,
-  schoolId: null, classId: null, enterClassTime: null, status: null, classHour: null,
-  education: null, graduateInstitutions: null, major: null, englishLevel: null,
-  needEdu: null, basisStatus: null, advisoryTeacher: null,
+  schoolId: null, classId: null, enterClassTime: null, learningStatus: null, classHour: null,
+  education: null, graduateInstitutions: null, major: null, englishLevel: null, needEdu: null,
+  status, basisStatus: null, advisoryTeacher: null,
   traineeDesc: null, workHistory: null, specialCommitment: null,
   degreeInPhoto: null, identityCardPhotoFront: null, identityCardPhotoBack: null,
   graduateTime: null, dataIntegrity: null, interviewStatus: null,
@@ -400,6 +501,7 @@ export default {
   name: 'Trainee',
   components: { pagination, crudOperation, rrOperation, udOperation, DateRangePicker },
   mixins: [presenter(), header(), form(defaultForm), crud()],
+  dicts: ['understand_channel', 'cost_source', 'education_level', 'basis_status', 'learning_status', 'trainee_status'],
   bases: ['course'],
   cruds() {
     return CRUD({
@@ -435,7 +537,7 @@ export default {
         needEmployment: [
           { required: true, message: '需要就业不能为空', trigger: 'blur' }
         ],
-        status: [
+        learningStatus: [
           { required: true, message: '学习状态不能为空', trigger: 'blur' }
         ],
         needEdu: [
@@ -448,7 +550,7 @@ export default {
           { max: 200, message: '工作经历请控制在200个字符内' }
         ],
         basisStatus: [
-          { max: 200, message: '专业基础情况请控制在200个字符内' }
+          { required: true, message: '专业基础不能为空' }
         ],
         traineeDesc: [
           { max: 200, message: '学员描述请控制在200个字符内' }
