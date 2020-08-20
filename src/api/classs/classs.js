@@ -1,5 +1,19 @@
 import request from '@/utils/request'
 
+export function getAllClass(id) {
+  const params = {
+    sort: ['graduateTime,asc', 'createTime,desc'],
+    page: 0,
+    size: 9999,
+    id
+  }
+  return request({
+    url: 'api/classs',
+    method: 'get',
+    params
+  })
+}
+
 export function add(data) {
   return request({
     url: 'api/classs',
