@@ -1,5 +1,5 @@
 import Vue from 'vue'
-import { getAll as getCourse } from '@/api/base/course'
+import { getBase } from '@/api/base/index'
 
 export default class Base {
   constructor(base) {
@@ -15,7 +15,8 @@ export default class Base {
       Vue.set(this.base.base, n, {})
       Vue.set(this.base.name, n, {})
       Vue.set(this.base, n, [])
-      ps.push(getCourse(n).then(data => {
+      // 判断不同基础配置
+      ps.push(getBase(n).then(data => {
         this.base[n].splice(0, 0, ...data.content)
         data.content.forEach(d => {
           Vue.set(this.base.base[n], d.id, d)

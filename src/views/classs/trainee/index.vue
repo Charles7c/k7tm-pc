@@ -514,7 +514,7 @@ export default {
         ],
         identityCard: [
           { required: true, message: '身份证号不能为空', trigger: 'blur' },
-          { pattern: /^[1-9]\d{5}(18|19|20|(3\d))\d{2}((0[1-9])|(1[0-2]))(([0-2][1-9])|10|20|30|31)\d{3}[0-9Xx]$/, message: '请输入正确的身份证号' }
+          { pattern: /^\d{15}$|^\d{18}$|^\d{17}[xX]$/, message: '请输入正确的身份证号' }
         ],
         needEmployment: [
           { required: true, message: '需要就业不能为空', trigger: 'blur' }
