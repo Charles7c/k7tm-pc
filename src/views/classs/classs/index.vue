@@ -224,7 +224,7 @@
             <span>{{ parseTime(scope.row.updateTime) }}</span>
           </template>
         </el-table-column>
-        <el-table-column v-permission="['admin','classs:edit','classs:del']" label="操作" width="150px" align="center">
+        <el-table-column v-permission="['admin','classs:edit','classs:del']" label="操作" width="150px" align="center" fixed="right">
           <template slot-scope="scope">
             <udOperation
               :data="scope.row"

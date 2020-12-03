@@ -39,7 +39,7 @@
                 </div>
               </div>
               <div class="content">
-                <el-progress type="circle" :percentage="parseFloat(data.cpu.used)" />
+                <el-progress type="dashboard" :percentage="parseFloat(data.cpu.used)" />
               </div>
             </el-tooltip>
             <div class="footer">{{ data.cpu.coreNumber }} 核心</div>
@@ -59,7 +59,7 @@
                 </div>
               </div>
               <div class="content">
-                <el-progress type="circle" :percentage="parseFloat(data.memory.usageRate)" />
+                <el-progress type="dashboard" :percentage="parseFloat(data.memory.usageRate)" />
               </div>
             </el-tooltip>
             <div class="footer">{{ data.memory.used }} / {{ data.memory.total }}</div>
@@ -79,7 +79,7 @@
                 </div>
               </div>
               <div class="content">
-                <el-progress type="circle" :percentage="parseFloat(data.swap.usageRate)" />
+                <el-progress type="dashboard" :percentage="parseFloat(data.swap.usageRate)" />
               </div>
             </el-tooltip>
             <div class="footer">{{ data.swap.used }} / {{ data.swap.total }}</div>
@@ -97,7 +97,7 @@
                   </div>
                 </div>
                 <div class="content">
-                  <el-progress type="circle" :percentage="parseFloat(data.disk.usageRate)" />
+                  <el-progress type="dashboard" :percentage="parseFloat(data.disk.usageRate)" />
                 </div>
               </el-tooltip>
             </div>
@@ -242,7 +242,7 @@ export default {
         }
         this.cpuInfo.xAxis.data.push(data.time)
         this.memoryInfo.xAxis.data.push(data.time)
-        this.cpuInfo.series[0].data.push(parseFloat(data.memory.used))
+        this.cpuInfo.series[0].data.push(parseFloat(data.cpu.used))
         this.memoryInfo.series[0].data.push(parseFloat(data.memory.usageRate))
       })
     }
@@ -268,14 +268,21 @@ export default {
     padding-bottom: 20px;
     margin-right: 5%;
   }
-  .title, .footer {
-    text-align: center;
-    font-size: 15px;
-    font-weight: 500;
-    color: #999;
-    height: 25px;
-    line-height: 25px;
-  }
+ .title {
+   text-align: center;
+   font-size: 15px;
+   font-weight: 500;
+   color: #999;
+   margin-bottom: 16px;
+ }
+ .footer {
+   text-align: center;
+   font-size: 15px;
+   font-weight: 500;
+   color: #999;
+   margin-top: -5px;
+   margin-bottom: 10px;
+ }
   .content {
     text-align: center;
     margin-top: 5px;
